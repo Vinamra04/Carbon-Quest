@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Emissions Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #141414;
+            color: #ffffff;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #000000, #001a00);
+        }
+
+        /* Glowing effect */
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00; }
+            50% { box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00; }
+            100% { box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00; }
+        }
+
+        /* Netflix-style header */
+        nav {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px 4%;
+            transition: background-color 0.3s;
+            position: fixed;
+            width: 92%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav h1 {
+            color: #00ff00;
+            font-size: 2rem;
+            margin: 0;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: #00ff00;
+            color: #000000;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        /* Main content */
+        .vehicle-section {
+            padding-top: 100px;
+            padding-bottom: 60px;
+        }
+
+        h2 {
+            color: #00ff00;
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            text-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+
+        /* Netflix-style grid */
+        .vehicle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px 4%;
+        }
+
+        .vehicle-button {
+            background: rgba(0, 40, 0, 0.6);
+            aspect-ratio: 16/9;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.5rem;
+            border: 2px solid rgba(0, 255, 0, 0.1);
+        }
+
+        .vehicle-button:hover {
+            transform: scale(1.05);
+            background: rgba(0, 255, 0, 0.2);
+            animation: glow 2s infinite;
+        }
+
+        /* Vehicle details section */
+        .vehicle-details {
+            margin: 40px auto;
+            width: 92%;
+            max-width: 800px;
+            background: rgba(0, 40, 0, 0.4);
+            padding: 30px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 0, 0.1);
+        }
+
+        .vehicle-details h3 {
+            color: #00ff00;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        .vehicle-details p {
+            color: #ffffff;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            text-shadow: 0 0 2px rgba(0, 255, 0, 0.2);
+        }
+
+        /* Netflix-style footer */
+        footer {
+            background: rgba(0, 0, 0, 0.8);
+            color: #00ff00;
+            text-align: center;
+            padding: 20px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            border-top: 1px solid rgba(0, 255, 0, 0.1);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .vehicle-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            nav h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <header>
+        <nav>
+            <h1>ECO EMISSIONS</h1>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="calculate.html">Calculate</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Vehicle Details Section -->
+    <section id="about-vehicles" class="vehicle-section">
+        <h2>Choose Your Vehicle</h2>
+        <div class="vehicle-grid">
+            <div class="vehicle-button" onclick="showDetails('car')">🚗 Car</div>
+            <div class="vehicle-button" onclick="showDetails('bus')">🚌 Bus</div>
+            <div class="vehicle-button" onclick="showDetails('train')">🚆 Train</div>
+            <div class="vehicle-button" onclick="showDetails('electric-car')">🔌 Electric Car</div>
+            <div class="vehicle-button" onclick="showDetails('bicycle')">🚲 Bicycle</div>
+            <div class="vehicle-button" onclick="showDetails('motorcycle')">🏍️ Motorcycle</div>
+            <div class="vehicle-button" onclick="showDetails('van')">🚐 Van</div>
+            <div class="vehicle-button" onclick="showDetails('hybrid-vehicle')">🌱 Hybrid Vehicle</div>
+            <div class="vehicle-button" onclick="showDetails('auto-rickshaw')">🚖 Auto Rickshaw</div>
+            <div class="vehicle-button" onclick="showDetails('cng-vehicle')">⛽ CNG Vehicle</div>
+        </div>
+
+        <!-- Details Section -->
+        <div class="vehicle-details">
+            <h3 id="vehicle-name">Select a vehicle to learn more</h3>
+            <p id="vehicle-info">Discover the environmental impact of different vehicles and make informed transportation choices.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>Carbon Emissions Tracker &copy; 2024</p>
+    </footer>
+
+    <script>
+        // Keep the existing vehicleData and showDetails function
+        const vehicleData = {
+            car: {
+                name: "Car",
+                info: "Cars are a significant source of carbon emissions, especially those using gasoline. On average, a gasoline-powered car emits around 4.6 metric tons of CO₂ per year. Electric and hybrid cars are more eco-friendly alternatives."
+            },
+            bus: {
+                name: "Bus",
+                info: "Buses emit less CO₂ per passenger compared to cars, but they still contribute significantly. An average diesel bus emits around 1.3 kg of CO₂ per kilometer. Switching to electric or hybrid buses can significantly reduce emissions."
+            },
+            train: {
+                name: "Train",
+                info: "Trains, particularly electric ones, are one of the most environmentally friendly modes of transportation. A passenger train can emit as little as 14 grams of CO₂ per kilometer, compared to over 100 grams for cars."
+            },
+            "electric-car": {
+                name: "Electric Car",
+                info: "Electric cars produce no direct emissions. However, their overall carbon footprint depends on how the electricity used to charge them is generated. If charged using renewable energy, electric cars can drastically reduce emissions."
+            },
+            bicycle: {
+                name: "Bicycle",
+                info: "Bicycles produce zero emissions and are the most eco-friendly means of transport. Cycling helps reduce not only CO₂ emissions but also traffic congestion and pollution in urban areas."
+            },
+            motorcycle: {
+                name: "Motorcycle",
+                info: "Motorcycles emit less CO₂ compared to cars, but their two-stroke engines are known to emit more pollutants like nitrogen oxides. An average motorcycle emits around 90 grams of CO₂ per kilometer."
+            },
+            van: {
+                name: "Van",
+                info: "Vans are primarily used for transporting goods and often run on diesel, making them heavy CO₂ emitters. A typical diesel van emits about 170 grams of CO₂ per kilometer. Electric vans are more sustainable alternatives."
+            },
+            "hybrid-vehicle": {
+                name: "Hybrid Vehicle",
+                info: "Hybrid vehicles combine a gasoline engine with an electric motor, which helps reduce fuel consumption and emissions. Depending on usage, a hybrid can emit 20-35% less CO₂ compared to traditional gasoline vehicles."
+            },
+            "auto-rickshaw": {
+                name: "Auto Rickshaw",
+                info: "Auto rickshaws, especially the gasoline-powered ones, contribute to urban pollution. Electric and CNG-powered rickshaws are emerging as cleaner alternatives, reducing emissions and improving air quality."
+            },
+            "cng-vehicle": {
+                name: "CNG Vehicle",
+                info: "Compressed Natural Gas (CNG) vehicles produce significantly less CO₂ compared to gasoline or diesel cars. They emit about 20% fewer greenhouse gases and are a cleaner option for urban transportation."
+            }
+        };
+
+        function showDetails(vehicleType) {
+            const vehicle = vehicleData[vehicleType];
+            document.getElementById('vehicle-name').textContent = vehicle.name;
+            document.getElementById('vehicle-info').textContent = vehicle.info;
+        }
+    </script>
+</body>
+</html>

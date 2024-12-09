@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Emission Project - Sign Up</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #121212;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        .container {
+            background: #1e1e1e;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(46, 213, 115, 0.15);
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #2ed573, transparent);
+            animation: lightning 3s infinite;
+        }
+
+        @keyframes lightning {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        h1 {
+            color: #2ed573;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            text-shadow: 0 0 10px rgba(46, 213, 115, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 65%;
+            transform: translateY(-50%);
+            color: #2ed573;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2ed573;
+            font-weight: 500;
+            font-size: 0.9em;
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            background: #2a2a2a;
+            border: 2px solid #333;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2ed573;
+            box-shadow: 0 0 15px rgba(46, 213, 115, 0.2);
+            background: #2d2d2d;
+        }
+
+        input:focus + .input-icon {
+            color: #2ed573;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .form-group:hover .input-icon {
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateY(-50%) rotate(0); }
+            25% { transform: translateY(-50%) rotate(-5deg); }
+            75% { transform: translateY(-50%) rotate(5deg); }
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #2ed573, #1db954);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(transparent, rgba(255,255,255,0.2), transparent);
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 213, 115, 0.3);
+        }
+
+        button:hover::after {
+            left: 100%;
+        }
+
+        .error {
+            color: #ff6b6b;
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: none;
+            padding-left: 45px;
+        }
+
+        .success {
+            color: #2ed573;
+            font-size: 0.9em;
+            margin-top: 15px;
+            display: none;
+            text-align: center;
+            padding: 10px;
+            background: rgba(46, 213, 115, 0.1);
+            border-radius: 6px;
+        }
+
+        .eco-decoration {
+            position: absolute;
+            color: #2ed573;
+            opacity: 0.1;
+            font-size: 1.5em;
+        }
+
+        .leaf-1 { top: 20px; right: 20px; }
+        .leaf-2 { bottom: 10px; left: 10px; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .form-group:focus-within label {
+            color: #2ed573;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <i class="fas fa-leaf eco-decoration leaf-1"></i>
+        <i class="fas fa-seedling eco-decoration leaf-2"></i>
+        <h1>Sign Up</h1>
+        <form id="signupForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" required>
+                <i class="fas fa-user input-icon"></i>
+                <div class="error" id="usernameError"></div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+                <i class="fas fa-envelope input-icon"></i>
+                <div class="error" id="emailError"></div>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+                <i class="fas fa-lock input-icon"></i>
+                <div class="error" id="passwordError"></div>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" required>
+                <i class="fas fa-shield-alt input-icon"></i>
+                <div class="error" id="confirmPasswordError"></div>
+            </div>
+            <button type="submit">Create Account</button>
+            <div class="success" id="successMessage">
+                <i class="fas fa-check-circle"></i> Account created successfully!
+            </div>
+        </form>
+    </div>
+    <script src="auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Emissions Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <link rel="stylesheet" href="menu.css">
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            font-family: 'Netflix Sans', Arial, sans-serif;
+            background-color: #141414;
+            color: #e5e5e5;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3, h4 {
+            color: #00e676;
+            text-align: center;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        p {
+            color: #b3b3b3;
+            text-align: center;
+            line-height: 1.6;
+            font-size: 18px;
+        }
+
+        /* Navbar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: #141414;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            animation: slideDown 0.5s ease;
+        }
+
+        nav h1 {
+            color: #00e676;
+            font-size: 32px;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+            animation: fadeIn 0.7s ease;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            animation: slideUp 0.5s ease;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            color: #b3b3b3;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+        }
+
+        nav ul li a:hover, .calculate-btn {
+            background-color: #00e676;
+            color: #141414;
+            transform: scale(1.1);
+            box-shadow: 0 0 10px #00e676;
+        }
+
+        /* Hero Section */
+        .hero {
+            background-image: linear-gradient(to bottom, rgba(20, 20, 20, 0.7), rgba(20, 20, 20, 0.7)), url('https://www.danielshealth.com/knowledge-center/case-study-84-greenhouse-gas-emission-reduction-reusable-sharps-containers');
+            background-size: cover;
+            background-position: center;
+            color: #e5e5e5;
+            padding: 200px 40px;
+            text-align: center;
+            animation: fadeIn 1.5s ease-in-out;
+            position: relative;
+        }
+
+        .hero h2 {
+            font-size: 56px;
+            margin-bottom: 20px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 22px;
+            margin: 60px 0;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 1.2s ease;
+        }
+
+        .hero .button {
+            background-color: #00e676;
+            color: #141414;
+            padding: 15px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin: 10px 0;
+            animation: fadeInUp 1.4s ease;
+        }
+
+        .hero .button:hover {
+            background-color: #00d665;
+            transform: scale(1.1);
+            box-shadow: 0 0 10px #00e676;
+        }
+
+        /* Features Section */
+        .features-section {
+            background-color: #1f1f1f;
+            padding: 80px 40px;
+            position: relative;
+        }
+
+        .features-section h2 {
+            font-size: 42px;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .feature-box {
+            background-color: #141414;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 300px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            animation: zoomIn 0.7s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #00e676;
+        }
+
+        .feature-box:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .feature-box:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .feature-box h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .feature-box p {
+            font-size: 16px;
+            color: #b3b3b3;
+        }
+
+        .feature-box i {
+            font-size: 48px;
+            color: #00e676;
+            margin-bottom: 20px;
+        }
+
+        /* About Us Section */
+        .about-section {
+            background-color: #1f1f1f;
+            padding: 80px 40px;
+            position: relative;
+        }
+
+        .about-section h2 {
+            font-size: 42px;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .team-members {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .team-member {
+            text-align: center;
+            max-width: 300px;
+            animation: zoomIn 0.7s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .team-member:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #00e676;
+        }
+
+        .team-member:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .team-member:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .team-member:nth-child(4) {
+            animation-delay: 0.6s;
+        }
+
+        .team-member img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+
+        .team-member h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .team-member p {
+            font-size: 16px;
+            color: #b3b3b3;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #141414;
+            color: #00e676;
+            text-align: center;
+            padding: 40px;
+            margin-top: 50px;
+            animation: slideUp 0.5s ease;
+        }
+
+        footer input[type="text"], footer textarea {
+            width: 80%;
+            max-width: 500px;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #00e676;
+            background-color: #1f1f1f;
+            color: #e5e5e5;
+        }
+
+        footer button {
+            padding: 10px 20px;
+            background-color: #00e676;
+            color: #141414;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        footer button:hover {
+            background-color: #00d665;
+            box-shadow: 0 0 10px #00e676;
+        }
+
+        /* Responsive Design */
+        @media only screen and (max-width: 768px) {
+            nav {
+                padding: 16px 20px;
+            }
+
+            nav h1 {
+                font-size: 28px;
+            }
+
+            nav ul li {
+                margin-left: 20px;
+            }
+
+            .hero {
+                padding: 160px 20px;
+            }
+
+            .hero h2 {
+                font-size: 42px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .features-section {
+                padding: 60px 20px;
+            }
+
+            .features-section h2 {
+                font-size: 36px;
+                margin-bottom: 30px;
+            }
+
+            .feature-box {
+                max-width: 240px;
+            }
+
+            .about-section {
+                padding: 60px 20px;
+            }
+
+            .about-section h2 {
+                font-size: 36px;
+                margin-bottom: 30px;
+            }
+
+            .team-member {
+                max-width: 240px;
+            }
+
+            .team-member img {
+                width: 120px;
+                height: 120px;
+            }
+
+            .team-member h3 {
+                font-size: 20px;
+            }
+
+            .team-member p {
+                font-size: 14px;
+            }
+        }
+
+        @media only screen and (max-width: 480px) {
+            .hero h2 {
+                font-size: 32px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); }
+            to { transform: translateY(0); }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); }
+            to { transform: translateY(0); }
+        }
+
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Additional Styles for Professional Look */
+        .arrow {
+            width: 0; 
+            height: 0; 
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 20px solid #00e676;
+            margin: 20px auto;
+        }
+
+        .shape {
+            width: 100px;
+            height: 100px;
+            background-color: #00e676;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            margin: 20px auto;
+        }
+
+        .textbox {
+            background-color: #1f1f1f;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            margin: 20px auto;
+            max-width: 600px;
+            text-align: left;
+        }
+
+        .textbox h3 {
+            color: #00e676;
+            margin-bottom: 10px;
+        }
+
+        .textbox p {
+            color: #b3b3b3;
+        }
+
+        /* New Styles for Enhanced User Experience */
+        .card {
+            background-color: #1f1f1f;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            margin: 20px;
+            max-width: 300px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #00e676;
+        }
+
+        .card img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            color: #00e676;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #b3b3b3;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .cta-section {
+            background-color: #141414;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .cta-section .button {
+            background-color: #00e676;
+            color: #141414;
+            padding: 15px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .cta-section .button:hover {
+            background-color: #00d665;
+            transform: scale(1.1);
+            box-shadow: 0 0 10px #00e676;
+        }
+
+        .testimonial-section {
+            background-color: #1f1f1f;
+            padding: 80px 40px;
+            text-align: center;
+        }
+
+        .testimonial-section h2 {
+            font-size: 42px;
+            margin-bottom: 40px;
+        }
+
+        .testimonial {
+            background-color: #141414;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            margin: 20px auto;
+            max-width: 600px;
+            text-align: left;
+        }
+
+        .testimonial p {
+            color: #b3b3b3;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .testimonial h3 {
+            color: #00e676;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .testimonial span {
+            color: #b3b3b3;
+            font-size: 16px;
+        }
+
+        .faq-section {
+            background-color: #1f1f1f;
+            padding: 80px 40px;
+        }
+
+        .faq-section h2 {
+            font-size: 42px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .faq {
+            background-color: #141414;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            margin: 20px auto;
+            max-width: 800px;
+        }
+
+        .faq h3 {
+            color: #00e676;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .faq p {
+            color: #b3b3b3;
+            font-size: 18px;
+        }
+
+        /* New Sections */
+        .services-section {
+            background-color: #1f1f1f;
+            padding: 80px 40px;
+            text-align: center;
+        }
+
+        .services-section h2 {
+            font-size: 42px;
+            margin-bottom: 40px;
+        }
+
+        .services {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .service-box {
+            background-color: #141414;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 300px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            animation: zoomIn 0.7s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .service-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #00e676;
+        }
+
+        .service-box h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .service-box p {
+            font-size: 16px;
+            color: #b3b3b3;
+        }
+
+        .service-box i {
+            font-size: 48px;
+            color: #00e676;
+            margin-bottom: 20px;
+        }
+
+        .blog-section {
+            background-color: #1f1f1f;
+            padding: 80px 40px;
+            text-align: center;
+        }
+
+        .blog-section h2 {
+            font-size: 42px;
+            margin-bottom: 40px;
+        }
+
+        .blogs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .blog-box {
+            background-color: #141414;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 300px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            animation: zoomIn 0.7s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .blog-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #00e676;
+        }
+
+        .blog-box h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .blog-box p {
+            font-size: 16px;
+            color: #b3b3b3;
+        }
+
+        .blog-box i {
+            font-size: 48px;
+            color: #00e676;
+            margin-bottom: 20px;
+        }
+
+        .contact-section {
+            background-color: #1f1f1f;
+            padding: 80px 40px;
+            text-align: center;
+        }
+
+        .contact-section h2 {
+            font-size: 42px;
+            margin-bottom: 40px;
+        }
+
+        .contact-form {
+            background-color: #141414;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .contact-form input, .contact-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #00e676;
+            background-color: #1f1f1f;
+            color: #e5e5e5;
+        }
+
+        .contact-form button {
+            padding: 10px 20px;
+            background-color: #00e676;
+            color: #141414;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .contact-form button:hover {
+            background-color: #00d665;
+            box-shadow: 0 0 10px #00e676;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroText = document.querySelector('.hero-text');
+            heroText.classList.add('animate_animated', 'animate_fadeInUp');
+        });
+    </script>
+</head>
+<body>
+    <!-- Navbar -->
+    <header>
+        <nav>
+            <h1>Carbon Emissions Tracker</h1>
+            <ul>
+                <li><a href="calculate.html" class="button">Calculate Emissions</a></li>
+                <li><a href="vehicles.html" class="button">Learn About Emissions</a></li>
+                <li><a href="signup.html" class="calculate-btn">Login/Register</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-text">
+            <h2>Track and Reduce Your Carbon Footprint</h2>
+            <p>Learn how your daily activities impact the environment and calculate your personal emissions. Take action today to reduce your carbon footprint and make a positive impact.</p>
+            <a href="calculate.html" class="button">Calculate Emissions</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <h2>Key Features</h2>
+        <div class="features">
+            <div class="feature-box">
+                <i class="fas fa-chart-line"></i>
+                <h3>Personalized Tracking</h3>
+                <p>Calculate your individual carbon footprint and monitor your progress over time.</p>
+            </div>
+            <div class="feature-box">
+                <i class="fas fa-leaf"></i>
+                <h3>Reduction Strategies</h3>
+                <p>Receive tailored recommendations to help you reduce your emissions and live more sustainably.</p>
+            </div>
+            <div class="feature-box">
+                <i class="fas fa-globe"></i>
+                <h3>Comparative Insights</h3>
+                <p>Compare your carbon footprint with national and global averages to understand your impact.</p>
+            </div>
+            <div class="feature-box">
+                <i class="fas fa-recycle"></i>
+                <h3>Recycling Tips</h3>
+                <p>Get tips on how to recycle effectively and reduce waste in your daily life.</p>
+            </div>
+            <div class="feature-box">
+                <i class="fas fa-bicycle"></i>
+                <h3>Eco-friendly Transportation</h3>
+                <p>Learn about eco-friendly transportation options to reduce your carbon emissions.</p>
+            </div>
+            <div class="feature-box">
+                <i class="fas fa-solar-panel"></i>
+                <h3>Renewable Energy</h3>
+                <p>Discover how to switch to renewable energy sources for your home and reduce your carbon footprint.</p>
+            </div>
+        </div>
+        <div class="arrow"></div>
+        <div class="shape"></div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="about-section">
+        <h2>About Us</h2>
+        <div class="team-members">
+            <div class="team-member">
+                <img src="../images/Aaditya.jpg" alt="Aaditya Tiwary">
+                <h3>Aaditya Tiwary</h3>
+                <p>Backend Developer</p>
+            </div>
+            <div class="team-member">
+                <img src="../images/Adhyayan.jpg" alt="Adhyayan Dubey">
+                <h3>Adhyayan Dubey</h3>
+                <p>Frontend Developer</p>
+            </div>
+            <div class="team-member">
+                <img src="../images/Aditi.jpg" alt="Aditi Prasanth">
+                <h3>Aditi Prasanth</h3>
+                <p>UX/UI Designer</p>
+            </div>
+            <div class="team-member">
+                <img src="../images/Vinamra.jpg" alt="Vinamra Srivastava">
+                <h3>Vinamra Srivastava</h3>
+                <p>Framework Specialist</p>
+            </div>
+        </div>
+        <p>Join us in making the world a greener, cleaner place by reducing your carbon footprint with small, meaningful steps.</p>
+        <div class="textbox">
+            <h3>Our Mission</h3>
+            <p>We aim to provide individuals with the tools and knowledge they need to understand and reduce their carbon footprint. By tracking emissions and offering personalized recommendations, we empower people to make sustainable choices and contribute to a healthier planet.</p>
+        </div>
+    </section>    
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <h2>Ready to Make a Change?</h2>
+        <p>Join our community of eco-conscious individuals and start tracking your carbon emissions today. Together, we can make a difference.</p>
+        <a href="signup.html" class="button">Get Started</a>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonial-section">
+        <h2>What Our Users Say</h2>
+        <div class="testimonial">
+            <p>"The Carbon Emissions Tracker has completely changed the way I think about my daily activities. It's easy to use and has helped me make more sustainable choices."</p>
+            <h3>John Doe</h3>
+            <span>Environmental Enthusiast</span>
+        </div>
+        <div class="testimonial">
+            <p>"I love the personalized recommendations! They are practical and have made a real difference in reducing my carbon footprint."</p>
+            <h3>Jane Smith</h3>
+            <span>Eco-Warrior</span>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq">
+            <h3>How does the Carbon Emissions Tracker work?</h3>
+            <p>The tracker calculates your carbon footprint based on your daily activities, such as transportation, energy usage, and waste. It provides insights and recommendations to help you reduce your emissions.</p>
+        </div>
+        <div class="faq">
+            <h3>Is the tracker free to use?</h3>
+            <p>Yes, the Carbon Emissions Tracker is completely free to use. We believe that everyone should have access to tools that help them live more sustainably.</p>
+        </div>
+        <div class="faq">
+            <h3>How accurate are the emissions calculations?</h3>
+            <p>Our calculations are based on the latest data and research. While they provide a good estimate, individual results may vary based on specific circumstances.</p>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services-section">
+        <h2>Our Services</h2>
+        <div class="services">
+            <div class="service-box">
+                <i class="fas fa-seedling"></i>
+                <h3>Eco-Friendly Products</h3>
+                <p>Discover a range of eco-friendly products that help you reduce your carbon footprint.</p>
+            </div>
+            <div class="service-box">
+                <i class="fas fa-water"></i>
+                <h3>Water Conservation</h3>
+                <p>Learn how to conserve water and reduce your water footprint with practical tips and advice.</p>
+            </div>
+            <div class="service-box">
+                <i class="fas fa-wind"></i>
+                <h3>Energy Efficiency</h3>
+                <p>Find out how to make your home more energy-efficient and save on energy bills.</p>
+            </div>
+            <div class="service-box">
+                <i class="fas fa-tree"></i>
+                <h3>Tree Planting</h3>
+                <p>Join our tree planting initiatives and contribute to reforestation efforts.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="blog-section">
+        <h2>Latest Blog Posts</h2>
+        <div class="blogs">
+            <div class="blog-box">
+                <i class="fas fa-pen"></i>
+                <h3>10 Tips for a Greener Lifestyle</h3>
+                <p>Discover simple and effective ways to live a more eco-friendly life.</p>
+            </div>
+            <div class="blog-box">
+                <i class="fas fa-lightbulb"></i>
+                <h3>Innovative Green Technologies</h3>
+                <p>Learn about the latest green technologies that are shaping a sustainable future.</p>
+            </div>
+            <div class="blog-box">
+                <i class="fas fa-recycle"></i>
+                <h3>Recycling 101: What You Need to Know</h3>
+                <p>Get the basics on recycling and how to do it effectively.</p>
+            </div>
+            <div class="blog-box">
+                <i class="fas fa-leaf"></i>
+                <h3>Benefits of Plant-Based Diets</h3>
+                <p>Explore the environmental and health benefits of adopting a plant-based diet.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <h2>Contact Us</h2>
+        <div class="contact-form">
+            <input type="text" placeholder="Your Name">
+            <input type="email" placeholder="Your Email">
+            <textarea placeholder="Your Message"></textarea>
+            <button>Send Message</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>Carbon Emissions Tracker &copy; 2024</p>
+    </footer>
+
+    <!-- Add this right after <body> tag -->
+    <div id="menu-container"></div>
+
+    <script>
+        // Load the menu
+        fetch('menu.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('menu-container').innerHTML = data;
+            });
+
+        // Smooth scroll functionality
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' && e.target.hash) {
+                e.preventDefault();
+                const targetId = e.target.hash;
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    // Close the menu after clicking
+                    document.getElementById('active').checked = false;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

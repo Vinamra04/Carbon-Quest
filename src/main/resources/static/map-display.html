@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results</title>
+    <link rel='stylesheet' type='text/css' href='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/maps.css'>
+    <script src='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/maps-web.min.js'></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1e1e1e;
+            color: #f5f5f5;
+            display: flex;
+            height: 100vh;
+        }
+
+        #map {
+            width: 70%;
+            height: 100vh;
+        }
+
+        .route-info {
+            width: 30%;
+            padding: 20px;
+            background: #2c2c2c;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .route-info h2 {
+            color: #81d4fa;
+            margin-bottom: 20px;
+        }
+
+        .address-box {
+            background: #333;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+
+        .address-box h3 {
+            color: #81d4fa;
+            margin: 0 0 10px 0;
+        }
+
+        .address-box p {
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        #distance-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #333;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #81d4fa;
+            color: #000;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #4fc3f7;
+        }
+
+        .suggestions-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #333;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+
+        .suggestions-box h3 {
+            color: #81d4fa;
+            margin: 0 0 10px 0;
+        }
+
+        .suggestion-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #444;
+            color: #4CAF50;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-icon {
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+
+        /* Add new styles for trip navigation */
+        .trip-navigation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #2c2c2c;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-button {
+            background: #444;
+            border: none;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .nav-button:hover {
+            background: #555;
+        }
+
+        .nav-button:disabled {
+            background: #333;
+            cursor: not-allowed;
+        }
+
+        .trip-indicator {
+            color: #81d4fa;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        /* Adjust map container to account for navigation bar */
+        #map {
+            margin-top: 50px;
+        }
+
+        /* Add to your existing styles */
+        #route-emissions {
+            color: #4CAF50;  /* Green color for eco-awareness */
+            font-weight: bold;
+            padding: 8px 0;
+            border-top: 1px solid #444;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Add trip navigation bar -->
+    <div class="trip-navigation">
+        <button id="prevTrip" class="nav-button" onclick="showPreviousTrip()">&lt; Previous</button>
+        <span id="tripIndicator" class="trip-indicator">Trip 1</span>
+        <button id="nextTrip" class="nav-button" onclick="showNextTrip()">Next &gt;</button>
+    </div>
+
+    <div id="map"></div>
+    <div class="route-info">
+        <h2>Route Details</h2>
+        <div class="address-box">
+            <h3>Start Address</h3>
+            <p id="start-address"></p>
+        </div>
+        <div class="address-box">
+            <h3>End Address</h3>
+            <p id="end-address"></p>
+        </div>
+        <div id="distance-info">
+            <p id="route-distance"></p>
+            <p id="route-time"></p>
+            <p id="route-emissions"></p>
+        </div>
+        <div class="suggestions-box">
+            <h3>Eco-Friendly Suggestions</h3>
+            <div id="suggestions"></div>
+        </div>
+        <a href="calculate.html" class="back-button">Back to Calculator</a>
+    </div>
+
+    <script>
+        let currentTripIndex = 0;
+        let trips = [];
+        let map;
+        let activeRoutes = new Map();
+        const routeColors = [
+            '#FF4B4B', // Bright red
+            '#4CAF50', // Green
+            '#2196F3', // Blue
+            '#FFC107', // Amber
+            '#9C27B0', // Purple
+            '#FF9800', // Orange
+            '#00BCD4', // Cyan
+            '#795548'  // Brown
+        ];
+
+        // Parse all trips from URL parameters
+        function parseTripsFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tripData = [];
+            let index = 0;
+            
+            while (true) {
+                const start = urlParams.get(`start${index}`);
+                const end = urlParams.get(`end${index}`);
+                const vehicle = urlParams.get(`vehicle${index}`);
+                
+                if (!start || !end || !vehicle) break;
+                
+                tripData.push({
+                    startAddress: decodeURIComponent(start),
+                    endAddress: decodeURIComponent(end),
+                    vehicleType: decodeURIComponent(vehicle)
+                });
+                index++;
+            }
+            
+            return tripData;
+        }
+
+        // Initialize the map and load first trip
+        async function initializeMap() {
+            try {
+                trips = parseTripsFromUrl();
+                if (trips.length === 0) {
+                    console.error('No trips found in URL parameters');
+                    return;
+                }
+
+                // Initialize map
+                map = tt.map({
+                    key: '0TQGxzg4nBU5qP4Du9YkaQAkKJ1OvNnd',
+                    container: 'map',
+                    center: [77.2090, 28.6139], // Default center (Delhi)
+                    zoom: 13,
+                    style: 'https://api.tomtom.com/style/1/style/22.2.1-*?map=basic_main&key=0TQGxzg4nBU5qP4Du9YkaQAkKJ1OvNnd'
+                });
+
+                // Wait for map to load before showing first trip
+                map.on('load', async () => {
+                    updateNavigationButtons();
+                    await showTrip(0);
+                });
+
+            } catch (error) {
+                console.error('Error initializing map:', error);
+            }
+        }
+
+        // Show previous trip
+        async function showPreviousTrip() {
+            if (currentTripIndex > 0) {
+                currentTripIndex--;
+                await showTrip(currentTripIndex);
+            }
+        }
+
+        // Show next trip
+        async function showNextTrip() {
+            if (currentTripIndex < trips.length - 1) {
+                currentTripIndex++;
+                await showTrip(currentTripIndex);
+            }
+        }
+
+        // Update navigation buttons state
+        function updateNavigationButtons() {
+            document.getElementById('prevTrip').disabled = currentTripIndex === 0;
+            document.getElementById('nextTrip').disabled = currentTripIndex === trips.length - 1;
+            document.getElementById('tripIndicator').textContent = `Trip ${currentTripIndex + 1}`;
+        }
+
+        // Show specific trip
+        async function showTrip(index) {
+            const trip = trips[index];
+            
+            // Update UI elements
+            document.getElementById('start-address').textContent = trip.startAddress;
+            document.getElementById('end-address').textContent = trip.endAddress;
+            
+            // Calculate and display route if it doesn't exist
+            if (!activeRoutes.has(index)) {
+                await calculateRoute(trip, index);
+            }
+            
+            // Update navigation
+            currentTripIndex = index;
+            updateNavigationButtons();
+            
+            // Show markers for current route and hide others
+            activeRoutes.forEach((routeInfo, routeIndex) => {
+                if (routeIndex === index) {
+                    // Show markers for current route
+                    routeInfo.startMarker.addTo(map);
+                    routeInfo.endMarker.addTo(map);
+                } else {
+                    // Remove markers for other routes
+                    routeInfo.startMarker.remove();
+                    routeInfo.endMarker.remove();
+                }
+
+                // Update route visibility
+                const layerId = `route-${routeIndex}`;
+                if (routeIndex === index) {
+                    map.setPaintProperty(layerId, 'line-opacity', 1.0);
+                    map.setPaintProperty(layerId, 'line-width', 8);
+                    map.setPaintProperty(layerId, 'line-color', routeColors[routeIndex % routeColors.length]);
+                } else {
+                    map.setPaintProperty(layerId, 'line-opacity', 0.4);
+                    map.setPaintProperty(layerId, 'line-width', 4);
+                    map.setPaintProperty(layerId, 'line-color', '#808080');
+                }
+            });
+
+            // Create smooth transition between trips
+            const currentRoute = activeRoutes.get(index);
+            if (currentRoute) {
+                // First zoom out to show both routes if switching between trips
+                if (index !== currentTripIndex && activeRoutes.size > 1) {
+                    // Get bounds that include all routes
+                    const allBounds = getBoundsForAllRoutes();
+                    
+                    // First zoom out
+                    await new Promise(resolve => {
+                        map.fitBounds(allBounds, {
+                            padding: { top: 150, bottom: 150, left: 150, right: 150 },
+                            duration: 1000,
+                            maxZoom: 10  // Limit zoom out level
+                        });
+                        setTimeout(resolve, 1000); // Wait for zoom out to complete
+                    });
+
+                    // Then zoom in to the selected route
+                    map.fitBounds(currentRoute.bounds, {
+                        padding: { top: 50, bottom: 50, left: 50, right: 400 },
+                        duration: 1500,
+                        maxZoom: 15  // Limit zoom in level
+                    });
+                } else {
+                    // Direct zoom for first route or single route view
+                    map.fitBounds(currentRoute.bounds, {
+                        padding: { top: 50, bottom: 50, left: 50, right: 400 },
+                        duration: 1000
+                    });
+                }
+            }
+
+            // Update route information and fetch suggestions
+            const routeInfo = activeRoutes.get(index);
+            updateRouteInfo(routeInfo.routeData, trip);
+            await fetchAndDisplaySuggestions(trip);
+        }
+
+        // Modified calculateRoute function
+        async function calculateRoute(trip, index) {
+            try {
+                // Don't clear previous routes, only markers
+                clearMapLayers();
+
+                // Convert addresses to coordinates
+                const startResponse = await fetch(`https://api.tomtom.com/search/2/geocode/${encodeURIComponent(trip.startAddress)}.json?key=0TQGxzg4nBU5qP4Du9YkaQAkKJ1OvNnd`);
+                const endResponse = await fetch(`https://api.tomtom.com/search/2/geocode/${encodeURIComponent(trip.endAddress)}.json?key=0TQGxzg4nBU5qP4Du9YkaQAkKJ1OvNnd`);
+                
+                if (!startResponse.ok || !endResponse.ok) {
+                    throw new Error('Failed to geocode addresses');
+                }
+
+                const startData = await startResponse.json();
+                const endData = await endResponse.json();
+
+                if (!startData.results.length || !endData.results.length) {
+                    throw new Error('Could not find coordinates for addresses');
+                }
+
+                const startCoords = startData.results[0].position;
+                const endCoords = endData.results[0].position;
+
+                // Create popup elements
+                const startPopup = new tt.Popup({ offset: 25 }).setText(trip.startAddress);
+                const endPopup = new tt.Popup({ offset: 25 }).setText(trip.endAddress);
+
+                // Add markers with popups for current route
+                const startMarker = new tt.Marker()
+                    .setLngLat([startCoords.lon, startCoords.lat])
+                    .setPopup(startPopup)
+                    .addTo(map);
+
+                const endMarker = new tt.Marker()
+                    .setLngLat([endCoords.lon, endCoords.lat])
+                    .setPopup(endPopup)
+                    .addTo(map);
+
+                // Show the end popup by default
+                endMarker.togglePopup();
+
+                // Calculate route
+                const routeResponse = await fetch(
+                    `https://api.tomtom.com/routing/1/calculateRoute/${startCoords.lat},${startCoords.lon}:${endCoords.lat},${endCoords.lon}/json?key=0TQGxzg4nBU5qP4Du9YkaQAkKJ1OvNnd`
+                );
+
+                if (!routeResponse.ok) {
+                    throw new Error('Failed to calculate route');
+                }
+
+                const routeData = await routeResponse.json();
+
+                // Draw route and store route information
+                const { bounds } = drawRoute(routeData, index);
+                
+                // Store route information including markers
+                activeRoutes.set(index, {
+                    routeData,
+                    bounds,
+                    startMarker,
+                    endMarker
+                });
+
+                // Update route information
+                updateRouteInfo(routeData, trip);
+                await fetchAndDisplaySuggestions(trip);
+
+            } catch (error) {
+                console.error('Error calculating route:', error);
+                document.getElementById('distance-info').innerHTML = 'Error calculating route';
+            }
+        }
+
+        // Initialize the page
+        window.onload = initializeMap;
+
+        // Function to display suggestions
+        function displaySuggestions(suggestionsText) {
+            const suggestionsContainer = document.getElementById('suggestions');
+            
+            // Split the response into lines and find the suggestions section
+            const lines = suggestionsText.split('\n');
+            const suggestionsStartIndex = lines.findIndex(line => line.startsWith('Personalized suggestions:'));
+            
+            if (suggestionsStartIndex !== -1) {
+                // Get only the suggestions part (skip the "Personalized suggestions:" line)
+                const suggestions = lines.slice(suggestionsStartIndex + 1)
+                    .filter(line => line.trim().startsWith('-'))
+                    .map(line => line.trim().substring(2)); // Remove the "- " prefix
+
+                // Display each suggestion with an icon
+                suggestionsContainer.innerHTML = suggestions
+                    .map(suggestion => `
+                        <div class="suggestion-item">
+                            <span class="suggestion-icon">💡</span>
+                            ${suggestion}
+                        </div>
+                    `)
+                    .join('');
+            } else {
+                suggestionsContainer.innerHTML = '<div class="suggestion-item">No suggestions available.</div>';
+            }
+        }
+
+        // Update the clearMapLayers function
+        function clearMapLayers() {
+            // Instead of removing all markers, we'll manage them through activeRoutes
+            // This function will now be empty since we manage markers in showTrip
+        }
+
+        function drawRoute(routeData, index) {
+            const coordinates = routeData.routes[0].legs[0].points.map(point => [point.longitude, point.latitude]);
+            
+            const geoJson = {
+                type: 'FeatureCollection',
+                features: [{
+                    type: 'Feature',
+                    geometry: {
+                        type: 'LineString',
+                        coordinates: coordinates
+                    }
+                }]
+            };
+
+            const sourceId = `route-source-${index}`;
+            const layerId = `route-${index}`;
+
+            // Add source if it doesn't exist
+            if (!map.getSource(sourceId)) {
+                map.addSource(sourceId, {
+                    type: 'geojson',
+                    data: geoJson
+                });
+
+                // Add main route layer
+                map.addLayer({
+                    id: layerId,
+                    type: 'line',
+                    source: sourceId,
+                    paint: {
+                        'line-color': routeColors[index % routeColors.length],
+                        'line-width': 8,
+                        'line-opacity': 1.0,
+                        'line-blur': 0,
+                        'line-offset': 0
+                    },
+                    layout: {
+                        'line-cap': 'round',
+                        'line-join': 'round'
+                    }
+                });
+
+                // Add glow effect layer
+                map.addLayer({
+                    id: `${layerId}-glow`,
+                    type: 'line',
+                    source: sourceId,
+                    paint: {
+                        'line-color': routeColors[index % routeColors.length],
+                        'line-width': 16,
+                        'line-opacity': 0.2,
+                        'line-blur': 2
+                    },
+                    layout: {
+                        'line-cap': 'round',
+                        'line-join': 'round'
+                    }
+                }, layerId); // Place glow behind the main route
+            }
+
+            // Calculate bounds
+            const bounds = coordinates.reduce((bounds, coord) => {
+                return bounds.extend(coord);
+            }, new tt.LngLatBounds(coordinates[0], coordinates[0]));
+
+            return { bounds };
+        }
+
+        // Update the updateRouteInfo function to include emissions data
+        async function updateRouteInfo(routeData, trip) {
+            const distance = (routeData.routes[0].summary.lengthInMeters / 1000).toFixed(2);
+            const time = Math.round(routeData.routes[0].summary.travelTimeInSeconds / 60);
+            
+            // Update basic route info
+            document.getElementById('start-address').textContent = trip.startAddress;
+            document.getElementById('end-address').textContent = trip.endAddress;
+            document.getElementById('route-distance').textContent = `Distance: ${distance} km`;
+            document.getElementById('route-time').textContent = `Estimated Time: ${time} minutes`;
+
+            try {
+                // Fetch emissions data from backend
+                const response = await fetch('/api/carbon/calculate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify([trip])
+                });
+
+                const responseText = await response.text();
+                
+                // Parse emissions value from the response
+                const emissionsMatch = responseText.match(/emissions of ([\d.]+) kg CO2/);
+                if (emissionsMatch && emissionsMatch[1]) {
+                    const emissions = parseFloat(emissionsMatch[1]).toFixed(2);
+                    // Add emissions info to the distance-info div
+                    document.getElementById('route-emissions').textContent = `Carbon Emissions: ${emissions} kg CO2`;
+                }
+
+                // Still display suggestions
+                displaySuggestions(responseText);
+            } catch (error) {
+                console.error('Error fetching emissions data:', error);
+                document.getElementById('route-emissions').textContent = 'Carbon Emissions: Unable to calculate';
+            }
+        }
+
+        async function fetchAndDisplaySuggestions(trip) {
+            try {
+                const response = await fetch('/api/carbon/calculate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify([trip])
+                });
+
+                const suggestionsText = await response.text();
+                displaySuggestions(suggestionsText);
+            } catch (error) {
+                console.error('Error fetching suggestions:', error);
+            }
+        }
+
+        // Update getBoundsForAllRoutes to include padding
+        function getBoundsForAllRoutes() {
+            const bounds = new tt.LngLatBounds();
+            activeRoutes.forEach(routeInfo => {
+                bounds.extend(routeInfo.bounds);
+            });
+            // Add some padding to the bounds
+            const padding = 0.1; // 10% padding
+            const sw = bounds.getSouthWest();
+            const ne = bounds.getNorthEast();
+            const latPad = (ne.lat - sw.lat) * padding;
+            const lngPad = (ne.lng - sw.lng) * padding;
+            return new tt.LngLatBounds(
+                [sw.lng - lngPad, sw.lat - latPad],
+                [ne.lng + lngPad, ne.lat + latPad]
+            );
+        }
+    </script>
+</body>
+</html> 

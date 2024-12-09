@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify TomTom SDK Paths</title>
+</head>
+<body>
+    <h1>TomTom SDK Path Verification</h1>
+    <script>
+        function verifyFile(path) {
+            fetch(path)
+                .then(response => {
+                    if(response.ok) {
+                        console.log(`✅ Found: ${path}`);
+                        document.write(`<p style="color: green">✅ Found: ${path}</p>`);
+                    } else {
+                        console.error(`❌ Not found: ${path}`);
+                        document.write(`<p style="color: red">❌ Not found: ${path}</p>`);
+                    }
+                })
+                .catch(error => {
+                    console.error(`❌ Error loading: ${path}`, error);
+                    document.write(`<p style="color: red">❌ Error loading: ${path}</p>`);
+                });
+        }
+
+        // Verify all required files
+        verifyFile('/css/tomtom/maps.css');
+        verifyFile('/css/tomtom/search.css');
+        verifyFile('/js/tomtom/maps-web.min.js');
+        verifyFile('/js/tomtom/services-web.min.js');
+        verifyFile('/js/tomtom/search-web.min.js');
+    </script>
+</body>
+</html> 
